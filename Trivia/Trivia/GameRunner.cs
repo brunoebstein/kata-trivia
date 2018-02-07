@@ -11,7 +11,22 @@ namespace Trivia
     {
         private static bool notAWinner;
 
+
         public static void Main(String[] args)
+        {
+            List<int> randomGeneratedNumbers = new List<int>();
+            Random rand = new Random();
+            StartGame(maxNumber =>
+            {
+                var num = rand.Next(maxNumber);
+                randomGeneratedNumbers.Add(num);
+                return num;
+            });
+
+            Console.WriteLine(string.Join(",",randomGeneratedNumbers));
+        }
+
+        public static void StartGame(Func<int, int> getNextRandomValue)
         {
             Game aGame = new Game();
 
@@ -19,14 +34,18 @@ namespace Trivia
             aGame.add("Pat");
             aGame.add("Sue");
 
-            Random rand = new Random();
+            RunGame(getNextRandomValue, aGame);
+        }
+
+        public static void RunGame(Func<int, int> rollTheDice, Game aGame)
+        {
+            if (!aGame.isPlayable()) return;
 
             do
             {
+                aGame.roll(rollTheDice(5) + 1);
 
-                aGame.roll(rand.Next(5) + 1);
-
-                if (rand.Next(9) == 7)
+                if (rollTheDice(9) == 7)
                 {
                     notAWinner = aGame.wrongAnswer();
                 }
@@ -34,14 +53,8 @@ namespace Trivia
                 {
                     notAWinner = aGame.wasCorrectlyAnswered();
                 }
-
-
-
             } while (notAWinner);
-
         }
-
-
     }
 
 }
