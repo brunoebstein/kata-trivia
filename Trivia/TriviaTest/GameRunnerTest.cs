@@ -18,15 +18,21 @@ namespace TriviaTest
         public static void VerifyConsoleOutput(Action action)
         {
             var oldOut = Console.Out;
-            using (var writer = new StringWriter())
+            try
             {
-                Console.SetOut(writer);
+                using (var writer = new StringWriter())
+                {
+                    Console.SetOut(writer);
 
-                action();
+                    action();
 
-                Approvals.Verify(writer.ToString());
+                    Approvals.Verify(writer.ToString());
+                }
             }
-            Console.SetOut(oldOut);
+            finally
+            {
+                Console.SetOut(oldOut);
+            }
         }
 
         [Test]
