@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ApprovalTests;
 using ApprovalTests.Reporters;
 using NUnit.Framework;
@@ -40,15 +41,22 @@ namespace TriviaTest
         {
             VerifyConsoleOutput(() => { Console.WriteLine("ok"); });
         }
-
+        
         [Test]
         public static void FakeMain()
         {
-            VerifyConsoleOutput(() =>
-            {
-                var fakeRandom = new FakeRand(0, 1, 2, 4, 3, 8, 2, 3, 3, 3, 1, 2, 1, 3, 2, 0, 0, 8, 3, 5, 1, 7, 2, 7, 0, 4, 4, 6, 3, 3, 2, 4);
-                GameRunner.StartGame(_ => fakeRandom.Next());
-            });
+            var stringBuild = new StringBuilder();
+            var fakeRandom = new FakeRand(0, 1, 2, 4, 3, 8, 2, 3, 3, 3, 1, 2, 1, 3, 2, 0, 0, 8, 3, 5, 1, 7, 2, 7, 0, 4, 4, 6, 3, 3, 2, 4);
+
+            Game aGame = new Game(str => stringBuild.AppendLine(str));
+
+            aGame.add("Chet");
+            aGame.add("Pat");
+            aGame.add("Sue");
+
+            GameRunner.RunGame(_ => fakeRandom.Next(), aGame);
+
+            Approvals.Verify(stringBuild.ToString());
         }
 
         [Test]
@@ -94,12 +102,13 @@ namespace TriviaTest
         [Test]
         public static void NotEnoughQuestions()
         {
-            Assert.Throws<System.InvalidOperationException>(() => {
-                GameRunner.StartGame(bound => bound == 9 ? 7: 0);
+            Assert.Throws<System.InvalidOperationException>(() =>
+            {
+                GameRunner.StartGame(bound => bound == 9 ? 7 : 0);
             });
         }
     }
-    
+
 
     public class FakeRand
     {
