@@ -80,6 +80,24 @@ namespace TriviaTest
                 GameRunner.StartGame(_ => fakeRandom.Next());
             });
         }
+
+        [Test]
+        public static void FakeMain5()
+        {
+            VerifyConsoleOutput(() =>
+            {
+                var fakeRandom = new FakeRand(1, 8, 2, 3, 1, 4, 0, 5, 4, 4, 0, 8, 3, 1, 1, 6, 1, 0, 1, 6, 0, 1, 3, 0, 2, 7, 4, 6, 0, 6, 2, 2, 4, 1);
+                GameRunner.StartGame(_ => fakeRandom.Next());
+            });
+        }
+
+        [Test]
+        public static void NotEnoughQuestions()
+        {
+            Assert.Throws<System.InvalidOperationException>(() => {
+                GameRunner.StartGame(bound => bound == 9 ? 7: 0);
+            });
+        }
     }
     
 
